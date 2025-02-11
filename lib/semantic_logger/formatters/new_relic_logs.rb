@@ -108,11 +108,13 @@ module SemanticLogger
 
       private
 
-      # NOTE: This function will already include trace.id and span.id if they 
-      # are available so I believe the previous implementation of this is redundant
-      # https://rubydoc.info/gems/newrelic_rpm/NewRelic/Agent#linking_metadata-instance_method
       def newrelic_metadata
-        NewRelic::Agent.linking_metadata.transform_keys(&:to_sym)
+        {
+          "trace.id": NewRelic::Agent::Tracer.current_trace_id,
+          "span.id":  NewRelic::Agent::Tracer.current_span_id,
+          **NewRelic::Agent.linking_metadata
+        }.reject { |_k, v| v.nil? }.
+          map { |k, v| [k.to_sym, v] }.to_h
       end
     end
   end
