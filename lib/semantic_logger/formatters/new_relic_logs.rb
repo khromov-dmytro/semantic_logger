@@ -47,7 +47,7 @@ module SemanticLogger
           metric_amount: hash[:metric_amount],
           environment:   hash[:environment],
           application:   hash[:application],
-          payload:       hash[:payload],
+          payload:       hash[:payload]&.except(:params),
           timestamp:     hash[:timestamp].to_i,
           logger: {
             name: log.name
